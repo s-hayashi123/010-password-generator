@@ -67,6 +67,17 @@ function App() {
     // 2. ループの中で、保証する文字 (`guaranteedChars`) を各種別から1文字ずつランダムに選んで追加する
     //    ヒント: `charSets[option][Math.floor(Math.random() * charSets[option].length)]`
     // 3. 同時に、全体の文字プール (`charPool`) に選択された文字セットをすべて結合する
+
+    const remainingLength = length - guaranteedChars.length;
+    let randomChars = "";
+
+    // TODO:
+    // 4. `remainingLength` の分だけ、`charPool` からランダムに文字を選んで `randomChars` に追加する
+
+    // TODO:
+    // 5. 保証された文字とランダムな文字を結合し、配列に変換してシャッフルする
+    //    ヒント: `(guaranteedChars + randomChars).split('')`
+    // 6. シャッフルした配列を文字列に戻し、`password` stateを更新する
   };
 
   return (
