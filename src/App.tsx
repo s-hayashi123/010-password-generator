@@ -139,7 +139,7 @@ function App() {
 
           <div className="space-y-6">
             <div>
-              <Label>パスワードの長さ： {length}</Label>
+              <Label className="mb-2">パスワードの長さ： {length}</Label>
               <Slider
                 // TODO: valueとonValueChangeを設定して、`length` stateと連携させる
                 value={[length]}
