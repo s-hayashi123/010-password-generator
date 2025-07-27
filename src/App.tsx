@@ -68,6 +68,13 @@ function App() {
     //    ヒント: `charSets[option][Math.floor(Math.random() * charSets[option].length)]`
     // 3. 同時に、全体の文字プール (`charPool`) に選択された文字セットをすべて結合する
 
+    selectedOptions.forEach((option) => {
+      const charSet = charSets[option as keyof typeof charSets];
+      const randomChar = charSet[Math.floor(Math.random() * charSet.length)];
+      guaranteedChars += randomChar;
+      charPool += charSet;
+    });
+
     const remainingLength = length - guaranteedChars.length;
     let randomChars = "";
 
@@ -78,6 +85,32 @@ function App() {
     // 5. 保証された文字とランダムな文字を結合し、配列に変換してシャッフルする
     //    ヒント: `(guaranteedChars + randomChars).split('')`
     // 6. シャッフルした配列を文字列に戻し、`password` stateを更新する
+
+    for (let i = 0; i < remainingLength; i++) {
+      const randomIndex = Math.floor(Math.random() * charPool.length);
+      randomChars += charPool[randomIndex];
+    }
+
+    const passwordArray = (guaranteedChars + randomChars).split("");
+    for (let i = 0; i < passwordArray.length; i++) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [passwordArray[i], passwordArray[j]] = [
+        passwordArray[j],
+        passwordArray[i],
+      ];
+    }
+    const shuffledPassword = passwordArray.join("");
+    setPassword(shuffledPassword);
+  };
+
+  const handleCopy = () => {
+    if (!password) return;
+
+    navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   return (
@@ -94,8 +127,14 @@ function App() {
               value={password}
               placeholder="ここにパスワードが表示されます"
             />
-            {/* TODO: コピーボタンをここに配置。クリックでクリップボードにコピーする */}
-            <Button>コピー</Button>
+            <Button onClick={handleCopy} variant="ghost">
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+              コピー
+            </Button>
           </div>
 
           <div className="space-y-6">
@@ -103,6 +142,8 @@ function App() {
               <Label>パスワードの長さ： {length}</Label>
               <Slider
                 // TODO: valueとonValueChangeを設定して、`length` stateと連携させる
+                value={[length]}
+                onValueChange={(value) => setLength(value[0])}
                 min={8}
                 max={32}
                 step={1}
@@ -114,8 +155,62 @@ function App() {
                     <Checkbox id="uppercase" checked={options.uppercase} onCheckedChange={(checked) => ...} />
                     <Label htmlFor="uppercase">大文字を含める</Label>
                   </div> */}
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="uppercase"
+                  checked={options.uppercase}
+                  onCheckedChange={(checked) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      uppercase: checked as boolean,
+                    }))
+                  }
+                />
+                <Label htmlFor="uppercase">大文字を含める</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="lowercase"
+                  checked={options.lowercase}
+                  onCheckedChange={(checked) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      lowercase: checked as boolean,
+                    }))
+                  }
+                />
+                <Label htmlFor="lowercase">小文字を含める</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="numbers"
+                  checked={options.numbers}
+                  onCheckedChange={(checked) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      numbers: checked as boolean,
+                    }))
+                  }
+                />
+                <Label htmlFor="numbers">数字を含める</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="symbols"
+                  checked={options.symbols}
+                  onCheckedChange={(checked) =>
+                    setOptions((prev) => ({
+                      ...prev,
+                      symbols: checked as boolean,
+                    }))
+                  }
+                />
+                <Label htmlFor="symbols">記号を含める</Label>
+              </div>
             </div>
-            <Button className="w-full">パスワードを生成</Button>
+            <Button className="w-full" onClick={handleGeneratePassword}>
+              パスワードを生成
+            </Button>
           </div>
         </CardContent>
       </Card>
